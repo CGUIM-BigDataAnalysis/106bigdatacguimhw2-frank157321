@@ -80,7 +80,12 @@ ggplot() +geom_bar(data=osixc, aes(x =國別 , y =在台學生數), stat = "iden
 
 ### 各個國家來台灣唸書的學生人數面量圖
 ```{r ToTWNCountryMap}
-#這是R Code Chunk
+library(choroplethr)
+data(osixcc)
+df = data.frame(region=osixcc$國別, value=osixcc$在台學生數(1:length(osixcc)))
+choroplethr(df, lod="world")
+#因choroplethr的1.7.0的方程式無法在自己電腦2.0.0中使用
+#This function is deprecated as of choroplethr version 2.0.0
 ```
 
 ## 台灣學生國際交流分析
@@ -123,7 +128,12 @@ ggplot() +geom_bar(data=group2, aes(x =X__6 , y =出國學生數), stat = "ident
 
 ### 台灣大專院校的學生最喜歡去哪些國家進修交流面量圖
 ```{r FromTWNCountryMap}
-#這是R Code Chunk
+library(choroplethr)
+data(group2)
+df = data.frame(region=group2$X__6, value=group2$出國學生數)
+choroplethr(df, lod="world")
+#因choroplethr的1.7.0的方程式無法在自己電腦2.0.0中使用
+#This function is deprecated as of choroplethr version 2.0.0.
 ```
 
 ## 台灣學生出國留學分析
@@ -143,6 +153,12 @@ head(seaturtle[order(seaturtle$總人數,decreasing = T),],10)
 
 ### 台灣學生最喜歡去哪些國家留學面量圖
 ```{r FromTWNAbMap}
+data(seaturtle)
+df = data.frame(region=seaturtle$國別, value=seaturtle$總人數)
+choroplethr(df, lod="world")
+#因choroplethr的1.7.0的方程式無法在自己電腦2.0.0中使用
+#This function is deprecated as of choroplethr version 2.0.0.
+-----------綜合分析-------------
 #台灣留學生留學地區統計
 head(seaturtle[order(seaturtle$總人數,decreasing = T),],15)
 #106年來台灣讀書的熱門國家與人數
