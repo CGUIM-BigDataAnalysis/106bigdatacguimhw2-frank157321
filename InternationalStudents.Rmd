@@ -1,7 +1,7 @@
 ---
 title: "106-2 大數據分析方法 作業二"
 output: github_document
-author: Yi-Ju Tseng
+author: 蕭睿甫
 ---
 
 作業完整說明[連結](https://docs.google.com/document/d/1aLGSsGXhgOVgwzSg9JdaNz2qGPQJSoupDAQownkGf_I/edit?usp=sharing)
@@ -13,26 +13,69 @@ author: Yi-Ju Tseng
 ## 來台境外生分析
 ### 資料匯入與處理
 ```{r dataloadToTWN}
-#這是R Code Chunk
+library(readr)
+library(readxl)
+library(dplyr)
+library(ggplot2) 
+othreec<- read_csv("~/Downloads/103_ab103_C.csv")
+ofourc<- read_csv("~/Downloads/104_ab104_C.csv")
+ofivec<- read_csv("~/Downloads/105_ab105_C.csv")
+osixc<- read_csv("~/Downloads/106_ab105_C.csv")    #以國為分類
+othrees<- read_csv("~/Downloads/103_ab103_S.csv")
+ofours<- read_csv("~/Downloads/104_ab104_S.csv")
+ofives<- read_csv("~/Downloads/105_ab105_S.csv")
+osixs<- read_csv("~/Downloads/106_ab105_S.csv")    #以校為分類
 ```
 
 ### 哪些國家來台灣唸書的學生最多呢？ 
 ```{r ToTWNCountry}
-#這是R Code Chunk
-head(iris)
-knitr::kable(head(iris))
-library(knitr)
-kable(head(iris))
+othreec$在台學生數<-othreec$`學位生-正式修讀學位外國生`+othreec$`學位生-僑生(含港澳)`+othreec$`學位生-正式修讀學位陸生`+othreec$`非學位生-外國交換生`+othreec$`非學位生-外國短期研習及個人選讀`+othreec$`非學位生-大專附設華語文中心學生`+othreec$`非學位生-大陸研修生`+othreec$`非學位生-海青班`+othreec$境外專班
+ofourc$在台學生數<-ofourc$`學位生-正式修讀學位外國生`+ofourc$`學位生-僑生(含港澳)`+ofourc$`學位生-正式修讀學位陸生`+ofourc$`非學位生-外國交換生`+ofourc$`非學位生-外國短期研習及個人選讀`+ofourc$`非學位生-大專附設華語文中心學生`+ofourc$`非學位生-大陸研修生`+ofourc$`非學位生-海青班`+ofourc$境外專班
+ofivec$在台學生數<-ofivec$學位生_正式修讀學位外國生+ofivec$`學位生_僑生(含港澳)`+ofivec$學位生_正式修讀學位陸生+ofivec$非學位生_外國交換生+ofivec$非學位生_外國短期研習及個人選讀+ofivec$非學位生_大專附設華語文中心學生+ofivec$非學位生_大陸研修生+ofivec$非學位生_海青班+ofivec$境外專班
+osixc$在台學生數<-osixc$學位生_正式修讀學位外國生+osixc$`學位生_僑生(含港澳)`+osixc$學位生_正式修讀學位陸生+osixc$非學位生_外國交換生+osixc$非學位生_外國短期研習及個人選讀+osixc$非學位生_大專附設華語文中心學生+osixc$非學位生_大陸研修生+osixc$非學位生_海青班+osixc$境外專班
+osixcc<-osixc[,c(1,2,12)]#之後會用到
+names(ofourc)<-names(ofivec)
+names(othreec)<-names(ofivec)
+osixc$國別<-paste("106", osixc$國別, sep='')
+ofivec$國別<-paste("105", ofivec$國別, sep='')
+ofourc$國別<-paste("104", ofourc$國別, sep='')
+othreec$國別<-paste("103", othreec$國別, sep='')
+seaoverc<-rbind(othreec,ofourc,ofivec,osixc)
+head(seaoverc[order(seaoverc$在台學生數,decreasing = T),c(2,12)],15)
+#以103年到106年的資料看起來中國大陸的留台學生是不容置疑的多
+#馬來西亞落座於長年第二，香港和日本持續追逐第三和第四，值得一提的是越南在106年度大幅提高了留學的人數
 ```
 
 ### 哪間大學的境外生最多呢？
 ```{r ToTWNUniversity}
-#這是R Code Chunk
+names(ofours)<-names(ofives)
+names(othrees)<-names(ofives)
+#統一column名字解決-與＿的不同
+othrees$外國學生數 <-othrees$`學位生_正式修讀學位外國生`+othrees$`學位生_僑生(含港澳)`+othrees$`學位生_正式修讀學位陸生`+othrees$`非學位生_外國交換生`+othrees$`非學位生_外國短期研習及個人選讀`+othrees$`非學位生_大專附設華語文中心學生`+othrees$`非學位生_海青班`+othrees$境外專班
+ofours$外國學生數 <-ofours$`學位生_正式修讀學位外國生`+ofours$`學位生_僑生(含港澳)`+ofours$`學位生_正式修讀學位陸生`+ofours$`非學位生_外國交換生`+ofours$`非學位生_外國短期研習及個人選讀`+ofours$`非學位生_大專附設華語文中心學生`+ofours$`非學位生_海青班`+ofours$境外專班
+ofives$外國學生數 <-ofives$學位生_正式修讀學位外國生+ofives$`學位生_僑生(含港澳)`+ofives$學位生_正式修讀學位陸生+ofives$非學位生_外國交換生+ofives$非學位生_外國短期研習及個人選讀+ofives$非學位生_大專附設華語文中心學生+ofives$非學位生_海青班+ofives$境外專班
+osixs$外國學生數 <-osixs$學位生_正式修讀學位外國生+osixs$`學位生_僑生(含港澳)`+osixs$學位生_正式修讀學位陸生+osixs$非學位生_外國交換生+osixs$非學位生_外國短期研習及個人選讀+osixs$非學位生_大專附設華語文中心學生+osixs$非學位生_海青班+osixs$境外專班
+#subset(osixs,osixs$非學位生_大陸研修生!=0)
+#subset(ofives,ofives$非學位生_大陸研修生!=0)
+#subset(ofours,ofours$非學位生_大陸研修生!=0)
+#subset(othrees,othrees$非學位生_大陸研修生!=0)
+#因“非學位生_大陸研修生”此欄位具有數值的列均指向 “9999 無法區分校別”故不列入計算範圍
+osixs$學校名稱<-paste("106", osixs$學校名稱, sep='')
+ofives$學校名稱<-paste("105", ofives$學校名稱, sep='')
+ofours$學校名稱<-paste("104", ofours$學校名稱, sep='')
+othrees$學校名稱<-paste("103", othrees$學校名稱, sep='')
+#因為是103-106年加總加上學校年度較好辨識
+seaoverst<-rbind(othrees,ofours,ofives,osixs)
+head(seaoverst[order(seaoverst$外國學生數,decreasing = T),c(3,13)],10)
+#台灣境外生最多的學校是台灣師範大學
+#其次即是台灣大學
+#而文化和銘傳長年角逐第三第四名
 ```
 
 ### 各個國家來台灣唸書的學生人數條狀圖
 ```{r ToTWNCountryBar}
-#這是R Code Chunk
+ggplot() +geom_bar(data=osixc, aes(x =國別 , y =在台學生數), stat = "identity")
+
 ```
 
 ### 各個國家來台灣唸書的學生人數面量圖
@@ -44,22 +87,38 @@ kable(head(iris))
 
 ### 資料匯入與處理
 ```{r dataloadFromTWN}
-#這是R Code Chunk
+library(readxl)
+alltoo <- read_excel("~/Downloads/kqxrv-7g4lo.xls", 
+                          skip = 2)
+
+#使用https://www.aconvert.com/tw/在線轉換ods檔案並存為xls
 ```
 
 ### 台灣大專院校的學生最喜歡去哪些國家進修交流呢？
 ```{r FromTWNCountry}
-#這是R Code Chunk
+head(alltoo[order(alltoo$小計,decreasing = T),c(1,6,8,10,11,13)],15)
+#台灣在學學生較喜歡去中國或日本進行交流（以前十五名來看占了十四名
+#值得注意的是瑞士與元培科大的合作是許多人嚮往的
 ```
 
 ### 哪間大學的出國交流學生數最多呢？
 ```{r FromTWNUniversity}
-#這是R Code Chunk
+library(dplyr)
+group1<-group_by(alltoo,學校名稱)%>%
+  summarise(出國學生數=sum(小計))
+head(group1[order(group1$出國學生數,decreasing = T),],10)
+#出國學生數台灣大學以4719人居首
 ```
 
 ### 台灣大專院校的學生最喜歡去哪些國家進修交流條狀圖
 ```{r FromTWNCountryBar}
-#這是R Code Chunk
+group2<-group_by(alltoo,X__6)%>%
+  summarise(出國學生數=sum(小計))
+head(group2[order(group2$出國學生數,decreasing = T),],10)
+ggplot() +geom_bar(data=group2, aes(x =X__6 , y =出國學生數), stat = "identity")
+#日本以12430穩居第一僅次於是大陸10429美國也是個不錯的選擇
+#但數據是有些許瑕疵的畢竟第一名其實是中國10429+5996的總共人數
+#而德國和德意志聯邦共和國也是屬於同個國家
 ```
 
 ### 台灣大專院校的學生最喜歡去哪些國家進修交流面量圖
@@ -71,19 +130,34 @@ kable(head(iris))
 
 ### 資料匯入與處理
 ```{r dataloadFromTWNAb}
-#這是R Code Chunk
+seaturtle<- read_csv("~/Downloads/105年度世界各主要國家之我留學生人數統計表 .csv")
 ```
 
 ### 台灣學生最喜歡去哪些國家留學呢？
 ```{r FromTWNAb}
-#這是R Code Chunk
+head(seaturtle[order(seaturtle$總人數,decreasing = T),],10)
+#第一名是美國第二名是澳洲
+#較令人感到意外是在前十名全部是歐洲美洲大洋洲的英語系國家
+#日本也是較多人傾向的地區居於第三 第二個上榜的亞洲國家大馬居於第九
 ```
 
 ### 台灣學生最喜歡去哪些國家留學面量圖
 ```{r FromTWNAbMap}
-#這是R Code Chunk
+#台灣留學生留學地區統計
+head(seaturtle[order(seaturtle$總人數,decreasing = T),],15)
+#106年來台灣讀書的熱門國家與人數
+head(osixcc[order(osixcc$在台學生數,decreasing = T),],15)
+join<-full_join(osixcc,seaturtle,by="國別")
+#仔細看一點
+innerjoin<-inner_join(osixcc,seaturtle,by="國別")
+#不難看出在亞洲的國家通常不是台灣學生留學考慮的對象
+#反而大洋洲、美洲的學生並不是很熱衷於來台灣留學，但台灣學生卻是爭破頭前往
+#日本學生輸出和輸入是非常相近1:1的
+#似乎沒有統計外出留學中國的資料
 ```
 
 ## 綜合分析
 
 請問來台讀書與離台讀書的來源國與留學國趨勢是否相同(5分)？想來台灣唸書的境外生，他們的母國也有很多台籍生嗎？請圖文並茂說明你的觀察(10分)。
+
+
